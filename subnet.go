@@ -24,7 +24,7 @@ type Subnet struct {
 
 // GetSubnet Gets a subnet by display name.
 func (c *Client) GetSubnet(subnetName string) Subnet {
-	query := `SELECT	Address, 
+	query := `SELECT TOP 1 Address, 
 						CIDR, 
 						AddressMask, 
 						DisplayName, 
@@ -42,17 +42,21 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 		"name": subnetName,
 	}
 
-	subnet, err := c.QueryOne(query, parameters)
+	res, err := c.Query(query, parameters)
+
+	var subnet Subnet
+	bodyString := string(res)
 
 	if err != nil {
-		log.Infof("ResponseString %s", subnet)
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
 
 	if err := json.Unmarshal(res, &subnet); err != nil {
-		log.Infof("ResponseString %s", subnet)
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
+
 	return subnet
 }
 
