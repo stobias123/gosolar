@@ -37,7 +37,7 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 						TransientCount, 
 							StatusName 
 					FROM IPAM.Subnets 
-					WHERE DisplayName == @name`
+					WHERE DisplayName = @name`
 
 	parameters := map[string]interface{}{
 		"name": subnetName,
