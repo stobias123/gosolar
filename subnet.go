@@ -82,9 +82,9 @@ func (c *Client) ListSubnets() []Subnet {
 
 	var subnets []Subnet
 	bodyString := string(res)
-	log.Debugf("ResponseString %s", bodyString)
 
 	if err := json.Unmarshal(res, &subnets); err != nil {
+		log.Info("Couldnt unmarshal responseString %s", bodyString)
 		log.Fatal(err)
 	}
 	return subnets
