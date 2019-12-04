@@ -36,7 +36,7 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 						ReservedCount, 
 						TransientCount, 
 							StatusName 
-					FROM IPAM.Subnets 
+					FROM IPAM.Subnet
 					WHERE DisplayName = @name`
 
 	parameters := map[string]interface{}{
@@ -73,7 +73,7 @@ func (c *Client) ListSubnets() []Subnet {
 						ReservedCount, 
 						TransientCount, 
 							StatusName 
-					FROM IPAM.Subnets`
+					FROM IPAM.Subnet`
 
 	res, err := c.Query(query, nil)
 
