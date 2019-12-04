@@ -44,7 +44,7 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 
 	res, err := c.Query(query, parameters)
 
-	var subnet Subnet
+	var subnet []Subnet
 	bodyString := string(res)
 
 	if err != nil {
@@ -56,8 +56,11 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
+	if len(subnet) < 1 {
+		return Subnet{}
+	}
 
-	return subnet
+	return subnet[0]
 }
 
 // ListSubnets Lists subnets.
