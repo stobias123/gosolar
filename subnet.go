@@ -10,7 +10,7 @@ import (
 type Subnet struct {
 	SubnetID       int    `json:"SubnetId"`
 	Address        string `json:"Address"`
-	CIDR           string `json:"CIDR"`
+	CIDR           int    `json:"CIDR"`
 	FriendlyName   string `json:"FriendlyName"`
 	DisplayName    string `json:"DisplayName"`
 	AvailableCount int    `json:"AvailableCount"`
@@ -45,15 +45,16 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 
 	res, err := c.QueryRow(query, parameters)
 
+	var subnet Subnet
+	bodyString := string(res)
+
 	if err != nil {
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
 
-	var subnet Subnet
-	bodyString := string(res)
-	log.Debugf("ResponseString %s", bodyString)
-
 	if err := json.Unmarshal(res, &subnet); err != nil {
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
 	return subnet
@@ -76,12 +77,13 @@ func (c *Client) ListSubnets() []Subnet {
 
 	res, err := c.Query(query, nil)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var subnets []Subnet
 	bodyString := string(res)
+
+	if err != nil {
+		log.Info("Couldnt unmarshal responseString %s", bodyString)
+		log.Fatal(err)
+	}
 
 	if err := json.Unmarshal(res, &subnets); err != nil {
 		log.Info("Couldnt unmarshal responseString %s", bodyString)
