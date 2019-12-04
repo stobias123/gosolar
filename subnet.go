@@ -29,7 +29,6 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 						AddressMask, 
 						DisplayName, 
 						FriendlyName, 
-						Reserved, 
 						TotalCount, 
 						UsedCount, 
 						AvailableCount, 
