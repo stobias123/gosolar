@@ -2,7 +2,8 @@ package gosolar
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
+	log "github.com/sirupsen/logrus"
 )
 
 // IPAddress is a struct for basic unmarshalling of an IPAddress object
@@ -12,7 +13,7 @@ type IPAddress struct {
 	//TransientCount string `json"Transient"`
 }
 
-func (c *Client) getIP(subnetName string) IPAddress {
+func (c *Client) GetIP(subnetName string) IPAddress {
 
 	query := `
 		SELECT TOP 1
@@ -63,6 +64,27 @@ func (c *Client) getIP(subnetName string) IPAddress {
 //Invoke-SwisVerb $swis IPAM.SubnetManagement GetFirstAvailableIp @("199.10.1.0", "24")
 //Invoke-SwisVerb $swis IPAM.SubnetManagement ChangeIPStatus  @("199.10.1.1", "Used")
 //Update: Set-SwisObject $swis -Uri 'swis://localhost/Orion/IPAM.IPNode/IpNodeId=2' -Properties @{ Status = 'Used', Comment = "Reserved by terraform." }
-func (c *Client) reserveIP(ipAddress string) {
 
+// ReserveIP will set the IP Status to "Used"
+func (c *Client) ReserveIP(ipAddress string) string {
+	body := fmt.Sprintf("{\"%s\", \"Used\"}", ipAddress)
+	result, err := c.Invoke("IPAM.IPNode", "ChangeIPStatus", body)
+	resultString := string(result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info(resultString)
+	return resultString
+}
+
+// ReleaseIP will set the IP Status to "Unused"
+func (c *Client) ReleaseIP(ipAddress string) string {
+	body := fmt.Sprintf("{\"%s\", \"Unused\"}", ipAddress)
+	result, err := c.Invoke("IPAM.IPNode", "ChangeIPStatus", body)
+	resultString := string(result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info(resultString)
+	return resultString
 }
