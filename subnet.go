@@ -42,18 +42,15 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 		"name": subnetName,
 	}
 
-	res, err := c.QueryOne(query, parameters)
-
-	var subnet Subnet
-	bodyString := string(res)
+	subnet, err := c.QueryOne(query, parameters)
 
 	if err != nil {
-		log.Infof("ResponseString %s", bodyString)
+		log.Infof("ResponseString %s", subnet)
 		log.Fatal(err)
 	}
 
 	if err := json.Unmarshal(res, &subnet); err != nil {
-		log.Infof("ResponseString %s", bodyString)
+		log.Infof("ResponseString %s", subnet)
 		log.Fatal(err)
 	}
 	return subnet
