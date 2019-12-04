@@ -42,7 +42,7 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 		"name": subnetName,
 	}
 
-	res, err := c.QueryRow(query, parameters)
+	res, err := c.QueryOne(query, parameters)
 
 	var subnet Subnet
 	bodyString := string(res)
