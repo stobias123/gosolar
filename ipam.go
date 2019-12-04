@@ -13,24 +13,12 @@ type IPAddress struct {
 	//TransientCount string `json"Transient"`
 }
 
-func (c *Client) GetIP(subnetName string) IPAddress {
+func (c *Client) GetIP(subnetAddress string, subnetCIDR int) IPAddress {
 
-	query := `
-		SELECT TOP 1
-			I.Status
-			,I.DisplayName
-		FROM IPAM.IPNode I
-		WHERE Status = 2
-		AND I.Subnet.DisplayName = @subnetName
-	`
-
-	// build a map that will hold the parameters for the query above
-	parameters := map[string]interface{}{
-		"subnetName": subnetName,
-	}
+	body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
+	res, err := c.Invoke("IPAM.SubnetManagement", "GetFirstAvailableIp", body)
 
 	// run the query without with the parameters map above
-	res, err := c.Query(query, parameters)
 	bodyString := string(res)
 
 	if err != nil {
@@ -57,7 +45,8 @@ func (c *Client) GetIP(subnetName string) IPAddress {
 // ReserveIP will set the IP Status to "Used"
 func (c *Client) ReserveIP(ipAddress string) string {
 	body := fmt.Sprintf("{\"%s\", \"Used\"}", ipAddress)
-	result, err := c.Invoke("IPAM.IPNode", "ChangeIPStatus", body)
+	result, err := c.Invoke("IPAM.SubnetManagement", "ChangeIPStatus", body)
+
 	resultString := string(result)
 	if err != nil {
 		log.Fatal(err)
@@ -69,7 +58,7 @@ func (c *Client) ReserveIP(ipAddress string) string {
 // ReleaseIP will set the IP Status to "Unused"
 func (c *Client) ReleaseIP(ipAddress string) string {
 	body := fmt.Sprintf("{\"%s\", \"Unused\"}", ipAddress)
-	result, err := c.Invoke("IPAM.IPNode", "ChangeIPStatus", body)
+	result, err := c.Invoke("IPAM.SubnetManagement", "ChangeIPStatus", body)
 	resultString := string(result)
 	if err != nil {
 		log.Fatal(err)
