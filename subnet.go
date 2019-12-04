@@ -66,7 +66,6 @@ func (c *Client) ListSubnets() []Subnet {
 						AddressMask, 
 						DisplayName, 
 						FriendlyName, 
-						Reserved, 
 						TotalCount, 
 						UsedCount, 
 						AvailableCount, 
