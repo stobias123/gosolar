@@ -31,22 +31,10 @@ func (c *Client) GetIP(subnetName string) IPAddress {
 
 	// run the query without with the parameters map above
 	res, err := c.Query(query, parameters)
-
-	/* Another possible query is this
-	SELECT R.Address as SubnetAddress,
-		   R.CIDR,
-		   R.FriendlyName,
-		   R.PercentUsed,
-		(SELECT TOP 1
-			I2.IpAddress
-		FROM IPAM.IPNode as I2
-		WHERE I2.Status=2
-		AND I2.SubnetId = R.GroupID ) AS FreeIpAddress
-	FROM IPAM.GroupReport as R
-	WHERE R.GroupType='8' // This group is "subnets"
-	*/
+	bodyString := string(res)
 
 	if err != nil {
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
 
@@ -54,6 +42,7 @@ func (c *Client) GetIP(subnetName string) IPAddress {
 
 	// This should catch an empty ip.
 	if err := json.Unmarshal(res, &ip); err != nil {
+		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
 	}
 
