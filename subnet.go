@@ -81,12 +81,12 @@ func (c *Client) ListSubnets() []Subnet {
 		log.Fatal(err)
 	}
 
-	var subnet []Subnet
+	var subnets []Subnet
 	bodyString := string(res)
 	log.Debugf("ResponseString %s", bodyString)
 
-	if err := json.Unmarshal(res, &subnet); err != nil {
+	if err := json.Unmarshal(res, &subnets); err != nil {
 		log.Fatal(err)
 	}
-	return subnet
+	return subnets
 }
