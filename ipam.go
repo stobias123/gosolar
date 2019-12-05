@@ -34,6 +34,10 @@ func (c *Client) GetFirstAvailableIP(subnetAddress string, subnetCIDR string) IP
 
 	var ip IPAddress
 
+	ip = IPAddress{
+		Address: bodyString,
+	}
+
 	if err := json.Unmarshal(res, &ip); err != nil {
 		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
