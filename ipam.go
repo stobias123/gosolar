@@ -13,7 +13,7 @@ type IPAddress struct {
 	//TransientCount string `json"Transient"`
 }
 
-func (c *Client) GetIP(subnetAddress string, subnetCIDR int) IPAddress {
+func (c *Client) GetIP(subnetAddress string, subnetCIDR string) IPAddress {
 
 	body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
 	res, err := c.Invoke("IPAM.SubnetManagement", "GetFirstAvailableIp", body)
