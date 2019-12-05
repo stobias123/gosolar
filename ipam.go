@@ -8,19 +8,20 @@ import (
 
 // IPAddress is a struct for basic unmarshalling of an IPAddress object
 type IPAddress struct {
-	Address string `json:"DisplayName"`
-	Status  string `json:"Status"`
+	IpNodeId int    `json:"IpNodeId"`
+	Address  string `json:"DisplayName"`
+	Status   string `json:"Status"`
 	//TransientCount string `json"Transient"`
 }
 
-func (c *Client) GetIP(subnetAddress string, subnetCIDR string) IPAddress {
+// GetFirstAvailableIP returns the first available ip in the subnet
+func (c *Client) GetFirstAvailableIP(subnetAddress string, subnetCIDR string) IPAddress {
 
-	//body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
+	// We need to format the body as an array...
 	body := []string{
 		subnetAddress,
 		subnetCIDR,
 	}
-	log.Infof("%s", body)
 	res, err := c.Invoke("IPAM.SubnetManagement", "GetFirstAvailableIp", body)
 
 	// run the query without with the parameters map above
@@ -33,7 +34,31 @@ func (c *Client) GetIP(subnetAddress string, subnetCIDR string) IPAddress {
 
 	var ip IPAddress
 
-	// This should catch an empty ip.
+	if err := json.Unmarshal(res, &ip); err != nil {
+		log.Infof("ResponseString %s", bodyString)
+		log.Fatal(err)
+	}
+
+	return ip
+}
+
+// GetIP returns a full ip address object for ips
+func (c *Client) GetIP(ipAddress string) IPAddress {
+	query := "SELECT TOP 1 IpNodeId, IPAddress, Status  FROM IPAM.IpNode WHERE IPAddress = @ipAddress"
+	parameters := map[string]interface{}{
+		"ipAddress": ipAddress,
+	}
+	res, err := c.Query(query, parameters)
+	// run the query without with the parameters map above
+	bodyString := string(res)
+
+	if err != nil {
+		log.Infof("ResponseString %s", bodyString)
+		log.Fatal(err)
+	}
+
+	var ip IPAddress
+
 	if err := json.Unmarshal(res, &ip); err != nil {
 		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
