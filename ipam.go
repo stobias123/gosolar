@@ -18,7 +18,7 @@ func (c *Client) GetIP(subnetAddress string, subnetCIDR string) IPAddress {
 	//body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
 	body := &map[string]interface{}{
 		"subnetAddress": subnetAddress,
-		"subnetCIDR":    subnetCIDR,
+		"subnetCidr":    subnetCIDR,
 	}
 	log.Infof("%s", body)
 	res, err := c.Invoke("IPAM.SubnetManagement", "GetFirstAvailableIp", body)
