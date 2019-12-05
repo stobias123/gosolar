@@ -15,7 +15,12 @@ type IPAddress struct {
 
 func (c *Client) GetIP(subnetAddress string, subnetCIDR string) IPAddress {
 
-	body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
+	//body := fmt.Sprintf("{\"%s\", \"%s\"}", subnetAddress, subnetCIDR)
+	body := &map[string]interface{}{
+		subnetAddress: subnetAddress,
+		subnetCIDR:    subnetCIDR,
+	}
+	log.Infof("%s", body)
 	res, err := c.Invoke("IPAM.SubnetManagement", "GetFirstAvailableIp", body)
 
 	// run the query without with the parameters map above
