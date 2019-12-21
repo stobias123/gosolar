@@ -17,15 +17,21 @@ type Client struct {
 	URL      string
 	Username string
 	Password string
+	Server   string
 
 	// internal state
 	http *http.Client
 }
 
 // NewClient creates a new reference to the Client struct.
-func NewClient(host, user, pass string, ignoreSSL bool) *Client {
+func NewClient(host, user, pass string, useSSL bool, ignoreSSL bool) *Client {
+	var prefix = "http"
+	if useSSL {
+		prefix = "https"
+	}
 	return &Client{
-		URL:      fmt.Sprintf("https://%s:17778/SolarWinds/InformationService/v3/Json/", host),
+		URL:      fmt.Sprintf("%s://%s:17778/SolarWinds/InformationService/v3/Json/", prefix, host),
+		Server:   host,
 		Username: user,
 		Password: pass,
 		http: &http.Client{
