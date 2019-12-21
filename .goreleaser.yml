@@ -10,6 +10,12 @@ builds:
   # Path to main.go file or main package.
   # Default is `.`.
   main: ./solarcmd/main.go
+  goos:
+    - linux
+    - darwin
+    - windows
+  goarch:
+    - amd64
 - env:
   - CGO_ENABLED=0
 archives:
