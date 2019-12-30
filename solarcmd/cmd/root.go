@@ -108,5 +108,9 @@ func initConfig() {
 
 // GetClient is a convenience function to create a client object with provided strings.
 func GetClient(cmd *cobra.Command, args []string) *gosolar.Client {
-	return gosolar.NewClient(orionHost, orionUsername, orionPassword, orionSSL, true)
+	hostname := fmt.Sprintf("%s", viper.Get("server"))
+	username := fmt.Sprintf("%s", viper.Get("username"))
+	password := fmt.Sprintf("%s", viper.Get("password"))
+	ssl := fmt.Sprintf("%s", viper.Get("ssl"))
+	return gosolar.NewClient(hostname, username, password, ssl, true)
 }
