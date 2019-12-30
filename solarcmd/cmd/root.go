@@ -111,6 +111,6 @@ func GetClient(cmd *cobra.Command, args []string) *gosolar.Client {
 	hostname := fmt.Sprintf("%s", viper.Get("server"))
 	username := fmt.Sprintf("%s", viper.Get("username"))
 	password := fmt.Sprintf("%s", viper.Get("password"))
-	ssl := fmt.Sprintf("%s", viper.Get("ssl"))
-	return gosolar.NewClient(hostname, username, password, ssl, true)
+	//ssl := viper.Get("ssl")
+	return gosolar.NewClient(hostname, username, password, true, true)
 }
