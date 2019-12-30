@@ -2,20 +2,8 @@
 builds:
   # You can have multiple builds defined as a yaml list
   - # build1
-    # Defaults to the project name.
-    id: "my-build"
-
-    # Path to main.go file or main package.
-    # Default is `.`.
-    main: ./solarcmd/main.go
-
-    # Binary name.
-    # Can be a path (e.g. `bin/app`) to wrap the binary in a directory.
-    # Default is the name of the project directory.
     binary: solarcmd
 
-    # Custom environment variables to be set during the builds.
-    # Default is empty.
     env:
       - CGO_ENABLED=0
 
@@ -24,8 +12,7 @@ builds:
     # Defaults are darwin and linux.
     goos:
       - linux
-      - darwin 
-      - windows
+      - darwin
 
     # GOARCH to build for.
     # For more info refer to: https://golang.org/doc/install/source#environment
