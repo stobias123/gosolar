@@ -25,16 +25,16 @@ import (
 )
 
 var cfgFile string
+var orionUsername string
+var orionPassword string
+var orionHost string
+var orionSSL bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "solarcmd",
 	Short: "solarcmd is a CLI to interact with Solarwinds Orion API",
-	Long: `solarcmd is a CLI application that provides several common orion functions.
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  `solarcmd is a CLI application that provides several common orion functions.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -54,23 +54,30 @@ var versionCmd = &cobra.Command{
 	Short: "version is a CLI to interact with Solarwinds Orion API",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) { fmt.Println("1.0")},
+	Run: func(cmd *cobra.Command, args []string) { fmt.Println("1.0") },
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	
+
 	rootCmd.AddCommand(versionCmd)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("orion")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.solar.yaml)")
-	rootCmd.PersistentFlags().StringP("server", "s", viper.GetString("ORION_SERVER"), "Set Orion Server")
-	rootCmd.PersistentFlags().StringP("debug", "", viper.GetString("ORION_DEBUG"), "Set debug level")
-	rootCmd.PersistentFlags().StringP("username", "u", viper.GetString("ORION_USERNAME"), "Set Orion Username")
-	rootCmd.PersistentFlags().StringP("password", "p", viper.GetString("ORION_PASSWORD"), "Set Orion Password")
-	rootCmd.PersistentFlags().BoolP("ssl", "", viper.GetBool("ORION_USE_SSL"), "Use SSL")
+
+	rootCmd.PersistentFlags().StringVar(&orionHost, "server", "", "orion server")
+	viper.BindPFlag("server", rootCmd.PersistentFlags().Lookup("server"))
+
+	rootCmd.PersistentFlags().StringVar(&orionUsername, "username", "", "orion username")
+	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
+
+	rootCmd.PersistentFlags().StringVar(&orionPassword, "password", "", "orion password")
+	viper.BindPFlag("password", rootCmd.PersistentFlags().Lookup("password"))
+
+	rootCmd.PersistentFlags().BoolVar(&orionSSL, "ssl", true, "orion use ssl")
+	viper.BindPFlag("ssl", rootCmd.PersistentFlags().Lookup("ssl"))
+
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -101,10 +108,9 @@ func initConfig() {
 
 // GetClient is a convenience function to create a client object with provided strings.
 func GetClient(cmd *cobra.Command, args []string) *gosolar.Client {
-	hostname, _ := cmd.Flags().GetString("server")
-	username, _ := cmd.Flags().GetString("username")
-	password, _ := cmd.Flags().GetString("password")
-	ssl, _ := cmd.Flags().GetBool("ssl")
-
-	return gosolar.NewClient(hostname, username, password, ssl, true)
+	hostname := fmt.Sprintf("%s", viper.Get("server"))
+	username := fmt.Sprintf("%s", viper.Get("username"))
+	password := fmt.Sprintf("%s", viper.Get("password"))
+	//ssl := viper.Get("ssl")
+	return gosolar.NewClient(hostname, username, password, true, true)
 }
