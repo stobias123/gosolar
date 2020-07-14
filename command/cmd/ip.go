@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"encoding/json"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +26,7 @@ import (
 var cidr string
 var address string
 var comment string
+var alias string
 
 // ipCmd represents the ip command
 var ipCmd = &cobra.Command{
@@ -92,11 +94,26 @@ var commentCmd = &cobra.Command{
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
-  solarcmd ip comment --subnet 192.168.4.5 --comment "hello from solarcmd!"`,
+  solarcmd ip comment --address 192.168.4.5 --comment "hello from solarcmd!"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client := GetClient(cmd, args)
 
 		result := client.CommentOnIPNode(address, comment)
+		resultIP, _ := json.Marshal(result)
+		fmt.Println(string(resultIP))
+	},
+}
+
+var aliasCmd = &cobra.Command{
+	Use:   "alias",
+	Short: "Set an alias for the ip address",
+	Long: `For example:
+
+  solarcmd ip alias --address 192.168.4.5 --alias "test-hostname1"`,
+	Run: func(cmd *cobra.Command, args []string) {
+		client := GetClient(cmd, args)
+
+		result := client.AddHostnameAliastoIPNode(address, alias)
 		resultIP, _ := json.Marshal(result)
 		fmt.Println(string(resultIP))
 	},
@@ -125,6 +142,7 @@ func init() {
 	ipCmd.AddCommand(reserveCmd)
 	ipCmd.AddCommand(releaseCmd)
 	ipCmd.AddCommand(commentCmd)
+	ipCmd.AddCommand(aliasCmd)
 
 	ipGetCmd.Flags().StringP("subnet_address", "n", "", "Subnet address")
 	ipGetCmd.Flags().StringVarP(&cidr, "cidr", "c", "24", "CIDR Mask")
@@ -135,6 +153,9 @@ func init() {
 
 	commentCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
 	commentCmd.Flags().StringVarP(&comment, "comment", "", "", "Comment")
+
+	aliasCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
+	aliasCmd.Flags().StringVarP(&comment, "alias", "", "", "Alias")
 
 	releaseCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
 }
