@@ -38,7 +38,7 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 						StatusName 
 					FROM IPAM.Subnet
 					WHERE DisplayName = @name`
-	
+
 	parameters := map[string]interface{}{
 		"name": subnetName,
 	}
@@ -63,7 +63,6 @@ func (c *Client) GetSubnet(subnetName string) Subnet {
 
 	return subnet[0]
 }
-
 
 // GetSubnetByAddress Gets a subnet using the Address as a parameter
 func (c *Client) GetSubnetByAddress(address string) Subnet {
@@ -170,12 +169,12 @@ func (c *Client) ListSubnets() []Subnet {
 	bodyString := string(res)
 
 	if err != nil {
-		log.Info("Couldnt unmarshal responseString %s", bodyString)
+		log.Infof("Couldnt unmarshal responseString %s", bodyString)
 		log.Fatal(err)
 	}
 
 	if err := json.Unmarshal(res, &subnets); err != nil {
-		log.Info("Couldnt unmarshal responseString %s", bodyString)
+		log.Infof("Couldnt unmarshal responseString %s", bodyString)
 		log.Fatal(err)
 	}
 	return subnets

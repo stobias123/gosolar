@@ -21,14 +21,27 @@ func (suite *TestSuite) SetupTest() {
 	hostname := "localhost"
 	username := "bleh"
 	password := "bleh"
-	suite.client = NewClient(hostname, username, password, true)
+	suite.client = NewClient(hostname, username, password, false, true)
 }
 
 func (suite *TestSuite) TestFetchSubnet() {
 
 	subnet := suite.client.GetSubnet("Subnet1")
-	nullSubnetList := []Subnet{}
-	assert.Equal(suite.T(), nullSubnetList, subnet)
+	mockSubnet := Subnet{
+		SubnetID:       1234,
+		Address:        "10.199.152.0",
+		CIDR:           23,
+		FriendlyName:   "test subnet",
+		DisplayName:    "test subnet",
+		AvailableCount: 200,
+		ReservedCount:  2,
+		UsedCount:      181,
+		TotalCount:     512,
+		Comments:       "NFS - VLAN 410",
+		VLAN:           "410",
+		AddressMask:    "255.255.254.0",
+	}
+	assert.Equal(suite.T(), mockSubnet, subnet)
 }
 
 func (suite *TestSuite) TestFetchNamedSubnet() {
@@ -37,7 +50,7 @@ func (suite *TestSuite) TestFetchNamedSubnet() {
 	expectedSubnet := Subnet{
 		SubnetID:       1234,
 		Address:        "10.199.152.0",
-		CIDR:           "23",
+		CIDR:           23,
 		FriendlyName:   "test subnet",
 		DisplayName:    "test subnet",
 		AvailableCount: 200,
@@ -45,7 +58,7 @@ func (suite *TestSuite) TestFetchNamedSubnet() {
 		UsedCount:      181,
 		TotalCount:     512,
 		Comments:       "NFS - VLAN 410",
-		VLAN:           410,
+		VLAN:           "410",
 		AddressMask:    "255.255.254.0",
 	}
 	assert.Equal(suite.T(), expectedSubnet, subnet)

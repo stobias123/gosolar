@@ -116,3 +116,10 @@ end
 post '/SolarWinds/InformationService/v3/Json/Invoke/IPAM.SubnetManagement/ChangeIPStatus' do
     return '[{"IPNodeID": 123,"Address": "192.168.33.2","Status": 2,"StatusString": "Available","Comments": ""}]'
 end
+
+post '/Orion/IPAM.IPNode/IpNodeId=:id' do
+    return '[{"IPNodeID": 123,"Address": "192.168.33.2","Status": 2,"StatusString": "Available","Comments": ""}]'
+end
+
+
+#  
