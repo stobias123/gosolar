@@ -4,7 +4,7 @@ WORKDIR /go/solar
 COPY . .
 
 # Download our modules.
-WORKDIR /go/solar/command
+WORKDIR /go/solar/solarcmd
 RUN go build -o /solarcmd .
 
 FROM debian:buster
