@@ -24,7 +24,6 @@ import (
 )
 
 var cidr string
-var address string
 var comment string
 var alias string
 

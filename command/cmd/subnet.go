@@ -18,13 +18,12 @@ import (
 	"encoding/json"
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/stobias123/gosolar"
-	log "github.com/sirupsen/logrus"
 )
 
 var vlanName string
-var address string
 
 // subnetCmd represents the subnet command
 var subnetCmd = &cobra.Command{
@@ -53,10 +52,10 @@ var findSubnet = &cobra.Command{
 	Long:  `Find subnet by name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var subnet gosolar.Subnet
-		
+
 		client := GetClient(cmd, args)
 		subnetName, _ := cmd.Flags().GetString("name")
-		
+
 		if len(subnetName) > 1 {
 			subnet = client.GetSubnet(subnetName)
 		} else if len(address) > 1 {
@@ -75,8 +74,8 @@ var findSubnet = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(subnetCmd)
 	subnetCmd.AddCommand(findSubnet)
-	subnetCmd.AddCommand(listSubnets))
-	
+	subnetCmd.AddCommand(listSubnets)
+
 	findSubnet.Flags().StringP("name", "n", "", "Subnet name")
 	findSubnet.Flags().StringVarP(&vlanName, "vlan", "", "", "Subnet vlan")
 	findSubnet.Flags().StringVarP(&address, "address", "", "", "Subnet address")

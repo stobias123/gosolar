@@ -24,6 +24,7 @@ import (
 	"github.com/stobias123/gosolar"
 )
 
+var address string
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
@@ -54,12 +55,12 @@ var versionCmd = &cobra.Command{
 	Short: "version is a CLI to interact with Solarwinds Orion API",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) { fmt.Println("1.0")},
+	Run: func(cmd *cobra.Command, args []string) { fmt.Println("1.0") },
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	
+
 	rootCmd.AddCommand(versionCmd)
 
 	// Here you will define your flags and configuration settings.
