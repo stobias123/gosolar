@@ -63,7 +63,7 @@ func (c *Client) GetIP(ipAddress string) IPAddress {
 	res, err := c.Query(query, parameters)
 	// run the query without with the parameters map above
 	bodyString := string(res)
-	
+
 	if err != nil {
 		log.Infof("ResponseString %s", bodyString)
 		log.Fatal(err)
@@ -97,11 +97,39 @@ func (c *Client) ReserveIP(ipAddress string) IPAddress {
 		ipAddress,
 		"Used",
 	}
+	// Create: New-SwisObject $swis -EntityType 'IPAM.IPNode' -Properties @{ SubnetId=22; IPAddress='10.20.30.40' }
+
 	result, err := c.Invoke("IPAM.SubnetManagement", "ChangeIPStatus", body)
 
 	resultString := string(result)
 	if err != nil {
 		log.Info(resultString)
+		log.Fatal(err)
+	}
+	return c.GetIP(ipAddress)
+}
+
+// ReserveIPForHostname will set the IP Status to "Used" and set the alias to hostname
+func (c *Client) ReserveIPForHostname(ipAddress string, hostname string) IPAddress {
+	// We need to format the body as an array...
+	body := []string{
+		ipAddress,
+		"Used",
+	}
+	// Create: New-SwisObject $swis -EntityType 'IPAM.IPNode' -Properties @{ SubnetId=22; IPAddress='10.20.30.40' }
+
+	result, err := c.Invoke("IPAM.SubnetManagement", "ChangeIPStatus", body)
+
+	ipResult := []IPAddress{}
+	json.Unmarshal(result, &ipResult)
+	if len(ipResult) < 1 {
+		log.Fatal("Problem reserving IP.")
+	}
+	ipObj := ipResult[0]
+	c.AddHostnameAliastoIPNode(ipObj.Address, hostname)
+
+	if err != nil {
+		log.Info(ipResult)
 		log.Fatal(err)
 	}
 	return c.GetIP(ipAddress)
@@ -115,6 +143,7 @@ func (c *Client) ReleaseIP(ipAddress string) IPAddress {
 		"Available",
 	}
 	result, err := c.Invoke("IPAM.SubnetManagement", "ChangeIPStatus", body)
+
 	resultString := string(result)
 	if err != nil {
 		log.Info(resultString)
@@ -129,6 +158,45 @@ func (c *Client) CommentOnIPNode(ipAddress string, comment string) IPAddress {
 	ipAddr := c.GetIP(ipAddress)
 	body := map[string]interface{}{
 		"Comments": comment,
+	}
+	log.Info(ipAddr)
+	uri := fmt.Sprintf("swis://localhost/Orion/IPAM.IPNode/IpNodeId=%d", ipAddr.IPNodeID)
+	log.Info(uri)
+	result, err := c.Update(uri, body)
+	resultString := string(result)
+	if err != nil {
+		log.Info(resultString)
+		log.Fatal(err)
+	}
+	return c.GetIP(ipAddress)
+}
+
+// AddHostnameAliastoIPNode puts comments on a ip node object
+// https://localhost:17778/SolarWinds/InformationService/v3/Json/swis://--SERVERNAME--/Orion/IPAM.IPNode/IPNodeID=%s
+func (c *Client) AddHostnameAliastoIPNode(ipAddress string, hostname string) IPAddress {
+	ipAddr := c.GetIP(ipAddress)
+	body := map[string]interface{}{
+		"Alias": hostname,
+	}
+	log.Info(ipAddr)
+	uri := fmt.Sprintf("swis://localhost/Orion/IPAM.IPNode/IpNodeId=%d", ipAddr.IPNodeID)
+	log.Info(uri)
+	result, err := c.Update(uri, body)
+	resultString := string(result)
+	if err != nil {
+		log.Info(resultString)
+		log.Fatal(err)
+	}
+	return c.GetIP(ipAddress)
+}
+
+// AddHostnametoIPNode puts comments on a ip node object
+// https://localhost:17778/SolarWinds/InformationService/v3/Json/swis://--SERVERNAME--/Orion/IPAM.IPNode/IPNodeID=%s
+func (c *Client) AddHostnametoIPNode(ipAddress string, hostname string) IPAddress {
+	ipAddr := c.GetIP(ipAddress)
+	body := map[string]interface{}{
+		"Alias":       hostname,
+		"DNSBackward": hostname,
 	}
 	log.Info(ipAddr)
 	uri := fmt.Sprintf("swis://localhost/Orion/IPAM.IPNode/IpNodeId=%d", ipAddr.IPNodeID)
