@@ -171,12 +171,32 @@ func (c *Client) CommentOnIPNode(ipAddress string, comment string) IPAddress {
 	return c.GetIP(ipAddress)
 }
 
-// CommentOnIPNode puts comments on a ip node object
+// AddHostnameAliastoIPNode puts comments on a ip node object
 // https://localhost:17778/SolarWinds/InformationService/v3/Json/swis://--SERVERNAME--/Orion/IPAM.IPNode/IPNodeID=%s
 func (c *Client) AddHostnameAliastoIPNode(ipAddress string, hostname string) IPAddress {
 	ipAddr := c.GetIP(ipAddress)
 	body := map[string]interface{}{
 		"Alias": hostname,
+	}
+	log.Info(ipAddr)
+	uri := fmt.Sprintf("swis://localhost/Orion/IPAM.IPNode/IpNodeId=%d", ipAddr.IPNodeID)
+	log.Info(uri)
+	result, err := c.Update(uri, body)
+	resultString := string(result)
+	if err != nil {
+		log.Info(resultString)
+		log.Fatal(err)
+	}
+	return c.GetIP(ipAddress)
+}
+
+// AddHostnametoIPNode puts comments on a ip node object
+// https://localhost:17778/SolarWinds/InformationService/v3/Json/swis://--SERVERNAME--/Orion/IPAM.IPNode/IPNodeID=%s
+func (c *Client) AddHostnametoIPNode(ipAddress string, hostname string) IPAddress {
+	ipAddr := c.GetIP(ipAddress)
+	body := map[string]interface{}{
+		"Alias":       hostname,
+		"DNSBackward": hostname,
 	}
 	log.Info(ipAddr)
 	uri := fmt.Sprintf("swis://localhost/Orion/IPAM.IPNode/IpNodeId=%d", ipAddr.IPNodeID)

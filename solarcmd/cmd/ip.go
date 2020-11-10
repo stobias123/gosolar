@@ -26,6 +26,7 @@ import (
 var cidr string
 var address string
 var comment string
+var hostname string
 var alias string
 
 // ipCmd represents the ip command
@@ -135,6 +136,24 @@ and usage of using your command. For example:
 	},
 }
 
+var setCmd = &cobra.Command{
+	Use:   "set",
+	Short: "Sets values on IP.Node",
+	Long: `Sets values on IP.Node
+	For example:
+
+  solarcmd ip set --hostname "test-hostname" -a 192.168.4.5`,
+	Run: func(cmd *cobra.Command, args []string) {
+		client := GetClient(cmd, args)
+
+		//result := client.GetIP(address)
+
+		result := client.AddHostnametoIPNode(address, hostname)
+		resultIP, _ := json.Marshal(result)
+		fmt.Println(string(resultIP))
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(ipCmd)
 	ipCmd.AddCommand(ipGetCmd)
@@ -143,6 +162,7 @@ func init() {
 	ipCmd.AddCommand(releaseCmd)
 	ipCmd.AddCommand(commentCmd)
 	ipCmd.AddCommand(aliasCmd)
+	ipCmd.AddCommand(setCmd)
 
 	ipGetCmd.Flags().StringP("subnet_address", "n", "", "Subnet address")
 	ipGetCmd.Flags().StringVarP(&cidr, "cidr", "c", "24", "CIDR Mask")
@@ -150,6 +170,9 @@ func init() {
 	reserveCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
 
 	lookupCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
+
+	setCmd.Flags().StringVarP(&hostname, "hostname", "", "", "Hostname")
+	setCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
 
 	commentCmd.Flags().StringVarP(&address, "address", "a", "", "Address")
 	commentCmd.Flags().StringVarP(&comment, "comment", "", "", "Comment")
